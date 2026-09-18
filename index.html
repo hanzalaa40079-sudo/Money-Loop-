@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Money Loop — Strategy Bot</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:#050b12;
+color:#e8f0f7;
+font-family:Inter,system-ui,Arial,sans-serif
+}
+
+.wrap{
+max-width:1180px;
+margin:auto;
+padding:18px
+}
+
+.top{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+margin-bottom:15px
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px
+}
+
+.logo{
+width:58px;
+height:58px;
+border:3px solid #19e56b;
+border-radius:50%;
+display:grid;
+place-items:center;
+color:#19e56b;
+font-size:29px;
+font-weight:900;
+box-shadow:0 0 18px #19e56b55
+}
+
+.brand h1{
+margin:0;
+font-size:27px;
+letter-spacing:.5px
+}
+
+.brand b{
+color:#19e56b
+}
+
+.brand small{
+color:#8da0b3
+}
+
+.status{
+padding:9px 13px;
+border:1px solid #24394c;
+border-radius:10px;
+color:#91a5b8
+}
+
+.status.run{
+color:#19e56b;
+border-color:#19e56b
+}
+
+.grid{
+display:grid;
+grid-template-columns:1.7fr .8fr;
+gap:14px
+}
+
+.card{
+background:#0b1520;
+border:1px solid #1b3041;
+border-radius:15px;
+padding:15px
+}
+
+.chartbox{
+padding:8px
+}
+
+.head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+flex-wrap:wrap
+}
+
+.controls{
+display:flex;
+gap:8px;
+flex-wrap:wrap
+}
+
+select,input,button{
+background:#0d1b29;
+color:#e8f0f7;
+border:1px solid #294052;
+border-radius:9px;
+padding:10px 12px;
+min-height:42px;
+font-weight:650
+}
+
+button{
+cursor:pointer
+}
+
+button.primary{
+background:#0cae50;
+border-color:#19e56b;
+color:#fff
+}
+
+button.danger{
+background:#541d27;
+border-color:#a83a4c
+}
+
+button:hover{
+filter:brightness(1.12)
+}
+
+canvas{
+width:100%;
+height:410px;
+display:block;
+background:#07111a;
+border-radius:10px;
+margin-top:10px
+}
+
+.signal{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+margin-top:12px;
+padding:16px;
+border-radius:12px;
+border:1px solid #234050;
+background:#091822
+}
+
+.sig{
+font-size:29px;
+font-weight:900
+}
+
+.up{
+color:#19e56b
+}
+
+.down{
+color:#ff5c70
+}
+
+.wait{
+color:#ffc857
+}
+
+.conf{
+min-width:130px;
+text-align:right
+}
+
+.meter{
+height:8px;
+background:#1b2c3a;
+border-radius:10px;
+overflow:hidden
+}
+
+.meter i{
+display:block;
+height:100%;
+background:#19e56b;
+width:50%
+}
+
+.two{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:12px
+}
+
+.metric{
+background:#0d1925;
+border:1px solid #1b3041;
+border-radius:10px;
+padding:12px
+}
+
+.metric span{
+display:block;
+color:#8da0b3;
+font-size:12px
+}
+
+.metric strong{
+display:block;
+margin-top:4px;
+font-size:18px
+}
+
+h2,h3{
+margin:0 0 10px
+}
+
+.muted{
+color:#8da0b3;
+font-size:13px
+}
+
+.checks{
+display:grid;
+gap:8px
+}
+
+.check{
+padding:9px 10px;
+border-radius:9px;
+background:#0d1925;
+color:#aebdca;
+font-size:13px
+}
+
+.check.ok{
+color:#7ff0a8
+}
+
+.check.bad{
+color:#ff8a98
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:13px
+}
+
+th,td{
+padding:9px 6px;
+border-bottom:1px solid #1b3041;
+text-align:left
+}
+
+th{
+color:#8da0b3
+}
+
+.upcell{
+color:#19e56b
+}
+
+.downcell{
+color:#ff5c70
+}
+
+.note{
+padding:11px;
+border-left:3px solid #ffc857;
+background:#17170f;
+color:#d9c78b;
+font-size:12px;
+line-height:1.45
