@@ -1,280 +1,1032 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Money Loop — Strategy Bot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020a12">
+<title>Money Loop</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
 margin:0;
-background:#050b12;
-color:#e8f0f7;
-font-family:Inter,system-ui,Arial,sans-serif
+padding:15px;
+background:#020a12;
+color:#fff;
+font-family:Arial,sans-serif;
 }
 
-.wrap{
-max-width:1180px;
+.app{
+max-width:1100px;
 margin:auto;
-padding:18px
 }
 
-.top{
+header{
 display:flex;
-align-items:center;
 justify-content:space-between;
-gap:15px;
-margin-bottom:15px
+align-items:center;
+padding:16px;
+background:#06131d;
+border:1px solid #12303c;
+border-radius:18px;
 }
 
 .brand{
 display:flex;
 align-items:center;
-gap:12px
+gap:12px;
 }
 
 .logo{
-width:58px;
-height:58px;
-border:3px solid #19e56b;
-border-radius:50%;
+width:48px;
+height:48px;
+border-radius:14px;
+background:#0bd66b;
+color:#00140a;
 display:grid;
 place-items:center;
-color:#19e56b;
-font-size:29px;
-font-weight:900;
-box-shadow:0 0 18px #19e56b55
+font-size:26px;
+font-weight:bold;
 }
 
-.brand h1{
+h1{
 margin:0;
-font-size:27px;
-letter-spacing:.5px
+font-size:23px;
 }
 
-.brand b{
-color:#19e56b
-}
-
-.brand small{
-color:#8da0b3
+.sub{
+color:#8ba2ae;
+font-size:12px;
+margin-top:4px;
 }
 
 .status{
-padding:9px 13px;
-border:1px solid #24394c;
-border-radius:10px;
-color:#91a5b8
-}
-
-.status.run{
-color:#19e56b;
-border-color:#19e56b
+padding:8px 12px;
+border-radius:20px;
+background:#0b2631;
+color:#77f5ad;
+font-size:12px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:1.7fr .8fr;
-gap:14px
+grid-template-columns:310px 1fr;
+gap:16px;
+margin-top:16px;
 }
 
 .card{
-background:#0b1520;
-border:1px solid #1b3041;
-border-radius:15px;
-padding:15px
+background:#06131d;
+border:1px solid #12303c;
+border-radius:18px;
+padding:16px;
 }
 
-.chartbox{
-padding:8px
+label{
+display:block;
+font-size:12px;
+color:#91a8b4;
+margin-bottom:7px;
 }
 
-.head{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:8px;
-flex-wrap:wrap
-}
-
-.controls{
-display:flex;
-gap:8px;
-flex-wrap:wrap
+.field{
+margin-bottom:14px;
 }
 
 select,input,button{
-background:#0d1b29;
-color:#e8f0f7;
-border:1px solid #294052;
-border-radius:9px;
-padding:10px 12px;
-min-height:42px;
-font-weight:650
+width:100%;
+padding:11px;
+border-radius:11px;
+border:1px solid #183c49;
+background:#071b27;
+color:#fff;
+font-size:14px;
 }
 
 button{
-cursor:pointer
+cursor:pointer;
+font-weight:bold;
 }
 
-button.primary{
-background:#0cae50;
-border-color:#19e56b;
-color:#fff
+.primary{
+background:#0bd66b;
+color:#00140a;
 }
 
-button.danger{
-background:#541d27;
-border-color:#a83a4c
+.danger{
+background:#35151a;
+color:#ff9ba7;
 }
 
-button:hover{
-filter:brightness(1.12)
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+}
+
+.signal{
+margin-top:15px;
+padding:18px;
+text-align:center;
+border-radius:16px;
+background:#071a24;
+border:1px solid #174653;
+}
+
+.signal-name{
+font-size:30px;
+font-weight:900;
+}
+
+.up{
+color:#35ed8a;
+}
+
+.down{
+color:#ff7180;
+}
+
+.wait{
+color:#f4c86a;
+}
+
+.strength{
+margin-top:6px;
+color:#a7b9c2;
+font-size:13px;
+}
+
+.metrics{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:9px;
+margin-top:12px;
+}
+
+.metric{
+padding:11px;
+background:#071923;
+border:1px solid #12303c;
+border-radius:12px;
+}
+
+.metric span{
+font-size:10px;
+color:#8198a4;
+}
+
+.metric b{
+display:block;
+margin-top:4px;
+font-size:15px;
+}
+
+.chart-head{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+}
+
+.pair{
+color:#73f0aa;
 }
 
 canvas{
 width:100%;
-height:410px;
+height:390px;
+background:#030e16;
+border:1px solid #102a35;
+border-radius:13px;
 display:block;
-background:#07111a;
-border-radius:10px;
-margin-top:10px
 }
 
-.signal{
+.history{
+margin-top:15px;
+}
+
+.hist-item{
 display:flex;
-align-items:center;
 justify-content:space-between;
-gap:15px;
-margin-top:12px;
-padding:16px;
-border-radius:12px;
-border:1px solid #234050;
-background:#091822
+padding:10px 0;
+border-bottom:1px solid #102832;
+font-size:12px;
 }
 
-.sig{
-font-size:29px;
-font-weight:900
+.badge{
+padding:5px 8px;
+border-radius:8px;
+font-weight:bold;
 }
 
-.up{
-color:#19e56b
+.badge.up{
+background:#0b3020;
 }
 
-.down{
-color:#ff5c70
-}
-
-.wait{
-color:#ffc857
-}
-
-.conf{
-min-width:130px;
-text-align:right
-}
-
-.meter{
-height:8px;
-background:#1b2c3a;
-border-radius:10px;
-overflow:hidden
-}
-
-.meter i{
-display:block;
-height:100%;
-background:#19e56b;
-width:50%
-}
-
-.two{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:12px
-}
-
-.metric{
-background:#0d1925;
-border:1px solid #1b3041;
-border-radius:10px;
-padding:12px
-}
-
-.metric span{
-display:block;
-color:#8da0b3;
-font-size:12px
-}
-
-.metric strong{
-display:block;
-margin-top:4px;
-font-size:18px
-}
-
-h2,h3{
-margin:0 0 10px
-}
-
-.muted{
-color:#8da0b3;
-font-size:13px
-}
-
-.checks{
-display:grid;
-gap:8px
-}
-
-.check{
-padding:9px 10px;
-border-radius:9px;
-background:#0d1925;
-color:#aebdca;
-font-size:13px
-}
-
-.check.ok{
-color:#7ff0a8
-}
-
-.check.bad{
-color:#ff8a98
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-font-size:13px
-}
-
-th,td{
-padding:9px 6px;
-border-bottom:1px solid #1b3041;
-text-align:left
-}
-
-th{
-color:#8da0b3
-}
-
-.upcell{
-color:#19e56b
-}
-
-.downcell{
-color:#ff5c70
+.badge.down{
+background:#35171d;
 }
 
 .note{
+margin-top:14px;
 padding:11px;
-border-left:3px solid #ffc857;
-background:#17170f;
-color:#d9c78b;
-font-size:12px;
-line-height:1.45
+background:#0b1820;
+border-radius:11px;
+color:#8ea4af;
+font-size:11px;
+line-height:1.5;
+}
+
+footer{
+text-align:center;
+color:#5f747e;
+font-size:10px;
+margin-top:16px;
+}
+
+@media(max-width:760px){
+body{
+padding:10px;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+canvas{
+height:300px;
+}
+
+.metrics{
+grid-template-columns:repeat(2,1fr);
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+<div class="brand">
+<div class="logo">$</div>
+<div>
+<h1>MONEY LOOP</h1>
+<div class="sub">Market Signal Analysis Prototype</div>
+</div>
+</div>
+
+<div id="status" class="status">● STOPPED</div>
+</header>
+
+
+<div class="grid">
+
+<section>
+
+<div class="card">
+
+<div class="field">
+<label>ASSET / PAIR</label>
+
+<select id="pair">
+
+<option>EUR/USD</option>
+<option>GBP/USD</option>
+<option>USD/JPY</option>
+<option>USD/CHF</option>
+<option>AUD/USD</option>
+<option>USD/CAD</option>
+<option>NZD/USD</option>
+<option>EUR/GBP</option>
+<option>EUR/JPY</option>
+<option>GBP/JPY</option>
+<option>EUR/CHF</option>
+<option>AUD/JPY</option>
+<option>USD/SGD</option>
+<option>USD/HKD</option>
+<option>USD/CNH</option>
+<option>USD/TRY</option>
+<option>USD/ZAR</option>
+<option>USD/MXN</option>
+<option>USD/SEK</option>
+<option>USD/NOK</option>
+<option>USD/PLN</option>
+<option>USD/BRL</option>
+<option>EUR/TRY</option>
+<option>GBP/CHF</option>
+<option>BTC/USD</option>
+<option>ETH/USD</option>
+<option>Gold (XAU/USD)</option>
+<option>Silver (XAG/USD)</option>
+<option>Brent Oil</option>
+<option>US 30</option>
+<option>US 500</option>
+<option>US Tech 100</option>
+<option>OTC — select matching asset</option>
+
+</select>
+</div>
+
+
+<div class="row">
+
+<div class="field">
+
+<label>EXPIRY</label>
+
+<select id="expiry">
+<option>5 sec</option>
+<option>16 sec</option>
+<option>30 sec</option>
+<option selected>1 min</option>
+<option>5 min</option>
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>AMOUNT (SIM)</label>
+
+<input id="amount" type="number" value="10" min="1">
+
+</div>
+
+</div>
+
+
+<div class="row">
+
+<button id="start" class="primary">
+START
+</button>
+
+<button id="stop" class="danger">
+STOP
+</button>
+
+</div>
+
+
+<button id="reset" style="margin-top:9px">
+RESET
+</button>
+
+
+<div class="signal">
+
+<div id="signal" class="signal-name wait">
+NO TRADE
+</div>
+
+<div id="strength" class="strength">
+Waiting for analysis...
+</div>
+
+</div>
+
+
+<div class="metrics">
+
+<div class="metric">
+<span>EMA 9</span>
+<b id="ema9">—</b>
+</div>
+
+<div class="metric">
+<span>EMA 21</span>
+<b id="ema21">—</b>
+</div>
+
+<div class="metric">
+<span>RSI 14</span>
+<b id="rsi">—</b>
+</div>
+
+<div class="metric">
+<span>S / R</span>
+<b id="sr">—</b>
+</div>
+
+</div>
+
+
+<div class="note">
+
+<b>Important:</b>
+This is a free simulated prototype. It generates market-like candles for testing.
+It does not connect to Quotex, does not import live Quotex prices, and does not place real trades.
+
+</div>
+
+</div>
+
+</section>
+
+
+<section>
+
+<div class="card">
+
+<div class="chart-head">
+
+<b>1-MINUTE MARKET CHART</b>
+
+<span id="pairLabel" class="pair">
+EUR/USD
+</span>
+
+</div>
+
+<canvas id="chart"></canvas>
+
+
+<div class="history">
+
+<b>RECENT SIGNALS</b>
+
+<div id="historyList" class="note">
+No signals yet.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<footer>
+Money Loop • Experimental educational prototype • No profit guarantee
+</footer>
+
+</div>
+
+
+<script>
+
+(function(){
+
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const canvas = $("chart");
+
+const ctx = canvas.getContext("2d");
+
+let candles = [];
+
+let history = [];
+
+let running = false;
+
+let timer = null;
+
+let lastSignal = "NO TRADE";
+
+
+function resizeCanvas(){
+
+const dpr = window.devicePixelRatio || 1;
+
+const rect = canvas.getBoundingClientRect();
+
+canvas.width = Math.floor(rect.width*dpr);
+
+canvas.height = Math.floor(rect.height*dpr);
+
+ctx.setTransform(dpr,0,0,dpr,0,0);
+
+draw();
+
+}
+
+
+window.addEventListener("resize",resizeCanvas);
+
+
+function seed(){
+
+candles=[];
+
+let price=100;
+
+for(let i=0;i<70;i++){
+
+let open=price;
+
+let close=Math.max(
+1,
+open+(Math.random()-0.47)*1.8
+);
+
+let high=Math.max(open,close)+Math.random()*1.1;
+
+let low=Math.min(open,close)-Math.random()*1.1;
+
+candles.push({
+o:open,
+c:close,
+h:high,
+l:low
+});
+
+price=close;
+
+}
+
+}
+
+
+function tick(){
+
+let previous=candles[candles.length-1].c;
+
+let open=previous;
+
+let close=Math.max(
+1,
+open+(Math.random()-0.48)*1.8
+);
+
+let high=Math.max(open,close)+Math.random();
+
+let low=Math.min(open,close)-Math.random();
+
+candles.push({
+o:open,
+c:close,
+h:high,
+l:low
+});
+
+if(candles.length>90){
+
+candles.shift();
+
+}
+
+analyze();
+
+draw();
+
+}
+
+
+function EMA(values,period){
+
+if(!values.length)return 0;
+
+let k=2/(period+1);
+
+let e=values[0];
+
+for(let i=1;i<values.length;i++){
+
+e=values[i]*k+e*(1-k);
+
+}
+
+return e;
+
+}
+
+
+function RSI(values,period){
+
+if(values.length<period+1)return 50;
+
+let gain=0;
+
+let loss=0;
+
+for(let i=values.length-period;i<values.length;i++){
+
+let diff=values[i]-values[i-1];
+
+if(diff>=0){
+
+gain+=diff;
+
+}else{
+
+loss-=diff;
+
+}
+
+}
+
+if(loss===0)return 100;
+
+return 100-(100/(1+gain/loss));
+
+}
+
+
+function analyze(){
+
+let closes=candles.map(c=>c.c);
+
+let ema9=EMA(closes.slice(-50),9);
+
+let ema21=EMA(closes.slice(-50),21);
+
+let rsi=RSI(closes,14);
+
+let recent=candles.slice(-20);
+
+let resistance=Math.max(...recent.map(c=>c.h));
+
+let support=Math.min(...recent.map(c=>c.l));
+
+let last=candles[candles.length-1];
+
+let body=last.c-last.o;
+
+let range=Math.max(
+0.0001,
+last.h-last.l
+);
+
+let score=0;
+
+
+if(ema9>ema21)score++;
+
+if(ema9<ema21)score--;
+
+if(rsi>52 && rsi<72)score++;
+
+if(rsi<48 && rsi>28)score--;
+
+if(body>0 && body/range>0.35)score++;
+
+if(body<0 && Math.abs(body)/range>0.35)score--;
+
+
+let signal="NO TRADE";
+
+let className="wait";
+
+let strength=50;
+
+
+if(score>=2 && rsi<75){
+
+signal="CALL / UP";
+
+className="up";
+
+strength=65+Math.min(30,score*7);
+
+}
+
+
+else if(score<=-2 && rsi>25){
+
+signal="PUT / DOWN";
+
+className="down";
+
+strength=65+Math.min(30,Math.abs(score)*7);
+
+}
+
+
+else{
+
+strength=50+Math.abs(score)*4;
+
+}
+
+
+$("signal").textContent=signal;
+
+$("signal").className="signal-name "+className;
+
+$("strength").textContent=
+"Experimental strength: "+
+Math.round(strength)+"%";
+
+$("ema9").textContent=ema9.toFixed(3);
+
+$("ema21").textContent=ema21.toFixed(3);
+
+$("rsi").textContent=rsi.toFixed(1);
+
+$("sr").textContent=
+support.toFixed(2)+" / "+
+resistance.toFixed(2);
+
+
+if(signal!==lastSignal &&
+signal!=="NO TRADE"){
+
+history.unshift({
+
+signal:signal,
+
+time:new Date().toLocaleTimeString(),
+
+pair:$("pair").value
+
+});
+
+history=history.slice(0,8);
+
+renderHistory();
+
+}
+
+
+lastSignal=signal;
+
+}
+
+
+function renderHistory(){
+
+let box=$("historyList");
+
+if(!history.length){
+
+box.textContent="No signals yet.";
+
+return;
+
+}
+
+
+box.innerHTML=history.map(item=>{
+
+let type=item.signal.startsWith("CALL")
+?"up":"down";
+
+return `
+
+<div class="hist-item">
+
+<span>
+${item.time} • ${item.pair}
+</span>
+
+<span class="badge ${type}">
+${item.signal}
+</span>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+
+function draw(){
+
+let width=canvas.clientWidth;
+
+let height=canvas.clientHeight;
+
+if(!width || !height)return;
+
+ctx.clearRect(0,0,width,height);
+
+ctx.fillStyle="#030e16";
+
+ctx.fillRect(0,0,width,height);
+
+if(!candles.length)return;
+
+
+let data=candles.slice(-60);
+
+let min=Math.min(...data.map(c=>c.l));
+
+let max=Math.max(...data.map(c=>c.h));
+
+let padding=(max-min)*0.12 || 1;
+
+min-=padding;
+
+max+=padding;
+
+
+let step=width/data.length;
+
+
+function y(value){
+
+return height-22-
+(value-min)/(max-min)*(height-42);
+
+}
+
+
+ctx.strokeStyle="#102832";
+
+ctx.lineWidth=1;
+
+
+for(let i=1;i<5;i++){
+
+let yy=10+i*(height-30)/5;
+
+ctx.beginPath();
+
+ctx.moveTo(0,yy);
+
+ctx.lineTo(width,yy);
+
+ctx.stroke();
+
+}
+
+
+data.forEach((candle,index)=>{
+
+let x=index*step+step/2;
+
+ctx.strokeStyle="#78909c";
+
+ctx.beginPath();
+
+ctx.moveTo(x,y(candle.h));
+
+ctx.lineTo(x,y(candle.l));
+
+ctx.stroke();
+
+
+ctx.fillStyle=
+candle.c>=candle.o
+?"#22d878"
+:"#ff6675";
+
+
+let top=y(Math.max(candle.o,candle.c));
+
+let bottom=y(Math.min(candle.o,candle.c));
+
+
+ctx.fillRect(
+x-step*0.32,
+top,
+Math.max(2,step*0.64),
+Math.max(2,bottom-top)
+);
+
+});
+
+
+function drawEMA(period){
+
+let values=[];
+
+for(let i=0;i<data.length;i++){
+
+values.push(
+EMA(
+data.slice(0,i+1).map(c=>c.c),
+period
+)
+);
+
+}
+
+
+ctx.beginPath();
+
+values.forEach((value,index)=>{
+
+let x=index*step+step/2;
+
+let yy=y(value);
+
+if(index===0){
+
+ctx.moveTo(x,yy);
+
+}else{
+
+ctx.lineTo(x,yy);
+
+}
+
+});
+
+ctx.stroke();
+
+}
+
+
+ctx.lineWidth=1.5;
+
+ctx.strokeStyle="#42e6a4";
+
+drawEMA(9);
+
+ctx.strokeStyle="#7ba8ff";
+
+drawEMA(21);
+
+}
+
+
+$("pair").addEventListener("change",function(){
+
+$("pairLabel").textContent=this.value;
+
+});
+
+
+$("start").addEventListener("click",function(){
+
+if(running)return;
+
+running=true;
+
+$("status").textContent="● RUNNING";
+
+$("status").style.color="#77f5ad";
+
+analyze();
+
+draw();
+
+timer=setInterval(tick,1000);
+
+});
+
+
+$("stop").addEventListener("click",function(){
+
+running=false;
+
+clearInterval(timer);
+
+timer=null;
+
+$("status").textContent="● STOPPED";
+
+$("status").style.color="#ff9ba7";
+
+});
+
+
+$("reset").addEventListener("click",function(){
+
+running=false;
+
+clearInterval(timer);
+
+timer=null;
+
+history=[];
+
+lastSignal="NO TRADE";
+
+$("status").textContent="● STOPPED";
+
+$("status").style.color="#ff9ba7";
+
+$("signal").textContent="NO TRADE";
+
+$("signal").className="signal-name wait";
+
+$("strength").textContent="Waiting for analysis...";
+
+renderHistory();
+
+seed();
+
+analyze();
+
+draw();
+
+});
+
+
+seed();
+
+requestAnimationFrame(function(){
+
+resizeCanvas();
+
+analyze();
+
+});
+
+})();
+
+</script>
+
+</body>
+</html>
