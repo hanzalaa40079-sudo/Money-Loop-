@@ -3,1028 +3,1521 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#020a12">
 <title>Money Loop</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 body{
-margin:0;
-padding:15px;
-background:#020a12;
-color:#fff;
-font-family:Arial,sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#050807;
+    color:#fff;
+    min-height:100vh;
 }
 
-.app{
-max-width:1100px;
-margin:auto;
+/* ================= LOGIN ================= */
+
+#loginScreen{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 50% 35%,rgba(0,255,150,.12),transparent 35%),
+        #050807;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    padding:20px;
 }
 
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:16px;
-background:#06131d;
-border:1px solid #12303c;
-border-radius:18px;
-}
-
-.brand{
-display:flex;
-align-items:center;
-gap:12px;
+.loginBox{
+    width:100%;
+    max-width:420px;
+    background:#0b110f;
+    border:1px solid #18352a;
+    border-radius:22px;
+    padding:35px 25px;
+    text-align:center;
+    box-shadow:0 0 45px rgba(0,255,150,.08);
 }
 
 .logo{
-width:48px;
-height:48px;
-border-radius:14px;
-background:#0bd66b;
-color:#00140a;
-display:grid;
-place-items:center;
-font-size:26px;
-font-weight:bold;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:2px;
+    color:#00ff9c;
+    margin-bottom:8px;
 }
 
-h1{
-margin:0;
-font-size:23px;
+.loginSubtitle{
+    color:#84948c;
+    margin-bottom:28px;
 }
 
-.sub{
-color:#8ba2ae;
-font-size:12px;
-margin-top:4px;
+.lockIcon{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.codeInput{
+    width:100%;
+    height:55px;
+    border-radius:12px;
+    border:1px solid #284638;
+    background:#060a08;
+    color:#fff;
+    text-align:center;
+    font-size:23px;
+    letter-spacing:8px;
+    outline:none;
+    margin-bottom:15px;
+}
+
+.codeInput:focus{
+    border-color:#00ff9c;
+    box-shadow:0 0 15px rgba(0,255,156,.12);
+}
+
+.loginBtn{
+    width:100%;
+    height:52px;
+    border:0;
+    border-radius:12px;
+    background:#00d98a;
+    color:#001b10;
+    font-weight:900;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.loginBtn:hover{
+    background:#00ff9c;
+}
+
+.error{
+    color:#ff5f6d;
+    margin-top:15px;
+    display:none;
+}
+
+.loginNote{
+    margin-top:22px;
+    color:#65736d;
+    font-size:12px;
+}
+
+/* ================= APP ================= */
+
+#app{
+    display:none;
+}
+
+header{
+    padding:18px;
+    border-bottom:1px solid #16251f;
+    background:#080d0b;
+    position:sticky;
+    top:0;
+    z-index:50;
+}
+
+.headerInner{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.brand{
+    font-size:25px;
+    font-weight:900;
+    color:#00ff9c;
 }
 
 .status{
-padding:8px 12px;
-border-radius:20px;
-background:#0b2631;
-color:#77f5ad;
-font-size:12px;
+    color:#00ff9c;
+    font-size:12px;
+    border:1px solid #145c42;
+    padding:7px 10px;
+    border-radius:20px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:310px 1fr;
-gap:16px;
-margin-top:16px;
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:18px;
 }
 
-.card{
-background:#06131d;
-border:1px solid #12303c;
-border-radius:18px;
-padding:16px;
+.controls{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:15px;
 }
 
-label{
-display:block;
-font-size:12px;
-color:#91a8b4;
-margin-bottom:7px;
+.control{
+    background:#0b110f;
+    border:1px solid #172a21;
+    border-radius:14px;
+    padding:13px;
 }
 
-.field{
-margin-bottom:14px;
+.control label{
+    display:block;
+    color:#708078;
+    font-size:11px;
+    text-transform:uppercase;
+    margin-bottom:8px;
 }
 
-select,input,button{
-width:100%;
-padding:11px;
-border-radius:11px;
-border:1px solid #183c49;
-background:#071b27;
-color:#fff;
-font-size:14px;
+select{
+    width:100%;
+    background:#060a08;
+    border:1px solid #294438;
+    color:#fff;
+    padding:11px;
+    border-radius:9px;
+    outline:none;
 }
 
-button{
-cursor:pointer;
-font-weight:bold;
+select:focus{
+    border-color:#00ff9c;
 }
 
-.primary{
-background:#0bd66b;
-color:#00140a;
+.chartBox{
+    background:#080d0b;
+    border:1px solid #172a21;
+    border-radius:18px;
+    overflow:hidden;
 }
 
-.danger{
-background:#35151a;
-color:#ff9ba7;
+.chartHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    border-bottom:1px solid #172a21;
 }
 
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:9px;
+.pairName{
+    font-size:18px;
+    font-weight:800;
+}
+
+.timeInfo{
+    color:#84948c;
+    font-size:12px;
+}
+
+canvas{
+    width:100%;
+    height:430px;
+    display:block;
+    background:#060a08;
+}
+
+.signalPanel{
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.signalCard{
+    background:#0b110f;
+    border:1px solid #172a21;
+    border-radius:18px;
+    padding:20px;
+}
+
+.signalTitle{
+    color:#718078;
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:10px;
 }
 
 .signal{
-margin-top:15px;
-padding:18px;
-text-align:center;
-border-radius:16px;
-background:#071a24;
-border:1px solid #174653;
+    font-size:40px;
+    font-weight:900;
+    letter-spacing:2px;
 }
 
-.signal-name{
-font-size:30px;
-font-weight:900;
+.call{
+    color:#00ff9c;
 }
 
-.up{
-color:#35ed8a;
+.put{
+    color:#ff6573;
 }
 
-.down{
-color:#ff7180;
-}
-
-.wait{
-color:#f4c86a;
+.noTrade{
+    color:#ffc857;
 }
 
 .strength{
-margin-top:6px;
-color:#a7b9c2;
-font-size:13px;
+    margin-top:8px;
+    color:#87958f;
+}
+
+.signalButton{
+    width:100%;
+    margin-top:18px;
+    height:54px;
+    border:0;
+    border-radius:12px;
+    background:#00d98a;
+    color:#001b10;
+    font-size:17px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.signalButton:hover{
+    background:#00ff9c;
+}
+
+.signalButton:disabled{
+    opacity:.45;
+    cursor:not-allowed;
 }
 
 .metrics{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:9px;
-margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:15px;
 }
 
 .metric{
-padding:11px;
-background:#071923;
-border:1px solid #12303c;
-border-radius:12px;
+    background:#080d0b;
+    border:1px solid #172a21;
+    border-radius:14px;
+    padding:15px;
 }
 
-.metric span{
-font-size:10px;
-color:#8198a4;
+.metricName{
+    font-size:11px;
+    color:#697870;
+    margin-bottom:6px;
 }
 
-.metric b{
-display:block;
-margin-top:4px;
-font-size:15px;
-}
-
-.chart-head{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-}
-
-.pair{
-color:#73f0aa;
-}
-
-canvas{
-width:100%;
-height:390px;
-background:#030e16;
-border:1px solid #102a35;
-border-radius:13px;
-display:block;
+.metricValue{
+    font-weight:800;
 }
 
 .history{
-margin-top:15px;
+    margin-top:15px;
+    background:#0b110f;
+    border:1px solid #172a21;
+    border-radius:18px;
+    padding:18px;
 }
 
-.hist-item{
-display:flex;
-justify-content:space-between;
-padding:10px 0;
-border-bottom:1px solid #102832;
-font-size:12px;
+.history h3{
+    margin-bottom:12px;
 }
 
-.badge{
-padding:5px 8px;
-border-radius:8px;
-font-weight:bold;
+.historyRow{
+    display:flex;
+    justify-content:space-between;
+    padding:11px 0;
+    border-bottom:1px solid #14221c;
+    font-size:13px;
 }
 
-.badge.up{
-background:#0b3020;
-}
-
-.badge.down{
-background:#35171d;
+.historyRow:last-child{
+    border-bottom:0;
 }
 
 .note{
-margin-top:14px;
-padding:11px;
-background:#0b1820;
-border-radius:11px;
-color:#8ea4af;
-font-size:11px;
-line-height:1.5;
+    margin-top:15px;
+    padding:15px;
+    background:#0a100d;
+    border:1px solid #263b31;
+    border-radius:14px;
+    color:#87958f;
+    font-size:12px;
+    line-height:1.6;
 }
 
-footer{
-text-align:center;
-color:#5f747e;
-font-size:10px;
-margin-top:16px;
+.logout{
+    margin-top:15px;
+    background:#111815;
+    border:1px solid #293b33;
+    color:#aab7b1;
+    padding:9px 14px;
+    border-radius:9px;
+    cursor:pointer;
 }
 
-@media(max-width:760px){
-body{
-padding:10px;
+/* ================= MOBILE ================= */
+
+@media(max-width:800px){
+    .controls{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .signalPanel{
+        grid-template-columns:1fr;
+    }
+
+    .metrics{
+        grid-template-columns:1fr 1fr;
+    }
+
+    canvas{
+        height:330px;
+    }
 }
 
-.grid{
-grid-template-columns:1fr;
-}
+@media(max-width:500px){
+    .controls{
+        grid-template-columns:1fr;
+    }
 
-canvas{
-height:300px;
-}
+    .headerInner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
 
-.metrics{
-grid-template-columns:repeat(2,1fr);
-}
+    canvas{
+        height:280px;
+    }
+
+    .signal{
+        font-size:34px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<!-- ================= LOGIN SCREEN ================= -->
+
+<div id="loginScreen">
+
+    <div class="loginBox">
+
+        <div class="lockIcon">🔐</div>
+
+        <div class="logo">MONEY LOOP</div>
+
+        <div class="loginSubtitle">
+            Private Trading Analysis Dashboard
+        </div>
+
+        <input
+            id="accessCode"
+            class="codeInput"
+            type="password"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="••••••"
+            autocomplete="off"
+        >
+
+        <button class="loginBtn" onclick="login()">
+            ACCESS MONEY LOOP
+        </button>
+
+        <div id="loginError" class="error">
+            ❌ Incorrect access code
+        </div>
+
+        <div class="loginNote">
+            Enter your 6-digit access code to continue.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MAIN APP ================= -->
+
+<div id="app">
 
 <header>
-<div class="brand">
-<div class="logo">$</div>
-<div>
-<h1>MONEY LOOP</h1>
-<div class="sub">Market Signal Analysis Prototype</div>
-</div>
-</div>
+    <div class="headerInner">
 
-<div id="status" class="status">● STOPPED</div>
+        <div class="brand">
+            MONEY LOOP
+        </div>
+
+        <div class="status">
+            ● SYSTEM READY
+        </div>
+
+    </div>
 </header>
 
 
-<div class="grid">
+<div class="container">
 
-<section>
+    <!-- CONTROLS -->
 
-<div class="card">
+    <div class="controls">
 
-<div class="field">
-<label>ASSET / PAIR</label>
+        <div class="control">
+            <label>Asset / Pair</label>
 
-<select id="pair">
+            <select id="pair">
+                <option>EUR/USD</option>
+                <option>GBP/USD</option>
+                <option>USD/JPY</option>
+                <option>USD/CHF</option>
+                <option>AUD/USD</option>
+                <option>USD/CAD</option>
+                <option>NZD/USD</option>
+                <option>EUR/GBP</option>
+                <option>EUR/JPY</option>
+                <option>GBP/JPY</option>
+                <option>EUR/CHF</option>
+                <option>AUD/JPY</option>
+                <option>USD/SGD</option>
+                <option>USD/HKD</option>
+                <option>USD/CNH</option>
+                <option>USD/TRY</option>
+                <option>USD/ZAR</option>
+                <option>USD/MXN</option>
+                <option>USD/SEK</option>
+                <option>USD/NOK</option>
+                <option>USD/PLN</option>
+                <option>USD/BRL</option>
+                <option>EUR/TRY</option>
+                <option>GBP/CHF</option>
+                <option>BTC/USD</option>
+                <option>ETH/USD</option>
+                <option>Gold (XAU/USD)</option>
+                <option>Silver (XAG/USD)</option>
+                <option>Brent Oil</option>
+                <option>US 30</option>
+                <option>US 500</option>
+                <option>US Tech 100</option>
 
-<option>EUR/USD</option>
-<option>GBP/USD</option>
-<option>USD/JPY</option>
-<option>USD/CHF</option>
-<option>AUD/USD</option>
-<option>USD/CAD</option>
-<option>NZD/USD</option>
-<option>EUR/GBP</option>
-<option>EUR/JPY</option>
-<option>GBP/JPY</option>
-<option>EUR/CHF</option>
-<option>AUD/JPY</option>
-<option>USD/SGD</option>
-<option>USD/HKD</option>
-<option>USD/CNH</option>
-<option>USD/TRY</option>
-<option>USD/ZAR</option>
-<option>USD/MXN</option>
-<option>USD/SEK</option>
-<option>USD/NOK</option>
-<option>USD/PLN</option>
-<option>USD/BRL</option>
-<option>EUR/TRY</option>
-<option>GBP/CHF</option>
-<option>BTC/USD</option>
-<option>ETH/USD</option>
-<option>Gold (XAU/USD)</option>
-<option>Silver (XAG/USD)</option>
-<option>Brent Oil</option>
-<option>US 30</option>
-<option>US 500</option>
-<option>US Tech 100</option>
-<option>OTC — select matching asset</option>
+                <option>EUR/USD OTC</option>
+                <option>GBP/USD OTC</option>
+                <option>USD/JPY OTC</option>
+                <option>EUR/JPY OTC</option>
+                <option>GBP/JPY OTC</option>
+                <option>Gold OTC</option>
+            </select>
+        </div>
 
-</select>
+
+        <div class="control">
+            <label>Chart Timeframe</label>
+
+            <select id="timeframe">
+                <option value="1">1 Minute</option>
+                <option value="5">5 Minutes</option>
+                <option value="30">30 Minutes</option>
+            </select>
+        </div>
+
+
+        <div class="control">
+            <label>Trade Expiry</label>
+
+            <select id="expiry">
+                <option value="5">5 Seconds</option>
+                <option value="15">15 Seconds</option>
+                <option value="30">30 Seconds</option>
+                <option value="60" selected>1 Minute</option>
+                <option value="300">5 Minutes</option>
+            </select>
+        </div>
+
+
+        <div class="control">
+            <label>Candle Status</label>
+
+            <div id="countdown"
+                 style="font-size:22px;font-weight:900;padding:7px 0;">
+                60s
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="chartBox">
+
+        <div class="chartHeader">
+
+            <div>
+                <div class="pairName" id="pairName">
+                    USD/JPY
+                </div>
+
+                <div class="timeInfo">
+                    Money Loop Analysis Chart
+                </div>
+            </div>
+
+            <div class="timeInfo" id="tfText">
+                1 Minute
+            </div>
+
+        </div>
+
+        <canvas id="chart"></canvas>
+
+    </div>
+
+
+    <!-- SIGNAL -->
+
+    <div class="signalPanel">
+
+        <div class="signalCard">
+
+            <div class="signalTitle">
+                Current Signal
+            </div>
+
+            <div id="signal"
+                 class="signal noTrade">
+                NO TRADE
+            </div>
+
+            <div class="strength">
+                Strength:
+                <span id="strength">--</span>
+            </div>
+
+            <button id="signalButton"
+                    class="signalButton"
+                    onclick="getSignal()">
+                GET SIGNAL
+            </button>
+
+        </div>
+
+
+        <div class="signalCard">
+
+            <div class="signalTitle">
+                Signal Information
+            </div>
+
+            <div style="line-height:1.8;color:#9aa8a1;font-size:14px;">
+
+                <div>
+                    Selected Pair:
+                    <b id="infoPair">USD/JPY</b>
+                </div>
+
+                <div>
+                    Candle:
+                    <b id="infoCandle">1 Minute</b>
+                </div>
+
+                <div>
+                    Expiry:
+                    <b id="infoExpiry">1 Minute</b>
+                </div>
+
+                <div>
+                    Signals:
+                    <b>1 per candle</b>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- INDICATORS -->
+
+    <div class="metrics">
+
+        <div class="metric">
+            <div class="metricName">EMA 9</div>
+            <div class="metricValue" id="ema9">--</div>
+        </div>
+
+        <div class="metric">
+            <div class="metricName">EMA 21</div>
+            <div class="metricValue" id="ema21">--</div>
+        </div>
+
+        <div class="metric">
+            <div class="metricName">RSI 14</div>
+            <div class="metricValue" id="rsi">--</div>
+        </div>
+
+        <div class="metric">
+            <div class="metricName">Market</div>
+            <div class="metricValue" id="market">
+                WAITING
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- HISTORY -->
+
+    <div class="history">
+
+        <h3>Recent Signals</h3>
+
+        <div id="historyList">
+            <div style="color:#68766f;font-size:13px;">
+                No signals yet.
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="note">
+        <b>Important:</b>
+        This is an experimental analysis interface using generated
+        market-like data. It does not connect to live Quotex prices,
+        does not reproduce Quotex OTC data, and does not place trades
+        automatically. Signals are not guaranteed to be accurate or
+        profitable. Always verify market conditions yourself before
+        making any financial decision.
+    </div>
+
+
+    <button class="logout" onclick="logout()">
+        🔒 Lock Money Loop
+    </button>
+
 </div>
-
-
-<div class="row">
-
-<div class="field">
-
-<label>EXPIRY</label>
-
-<select id="expiry">
-<option>5 sec</option>
-<option>16 sec</option>
-<option>30 sec</option>
-<option selected>1 min</option>
-<option>5 min</option>
-</select>
-
-</div>
-
-
-<div class="field">
-
-<label>AMOUNT (SIM)</label>
-
-<input id="amount" type="number" value="10" min="1">
-
-</div>
-
-</div>
-
-
-<div class="row">
-
-<button id="start" class="primary">
-START
-</button>
-
-<button id="stop" class="danger">
-STOP
-</button>
-
-</div>
-
-
-<button id="reset" style="margin-top:9px">
-RESET
-</button>
-
-
-<div class="signal">
-
-<div id="signal" class="signal-name wait">
-NO TRADE
-</div>
-
-<div id="strength" class="strength">
-Waiting for analysis...
-</div>
-
-</div>
-
-
-<div class="metrics">
-
-<div class="metric">
-<span>EMA 9</span>
-<b id="ema9">—</b>
-</div>
-
-<div class="metric">
-<span>EMA 21</span>
-<b id="ema21">—</b>
-</div>
-
-<div class="metric">
-<span>RSI 14</span>
-<b id="rsi">—</b>
-</div>
-
-<div class="metric">
-<span>S / R</span>
-<b id="sr">—</b>
-</div>
-
-</div>
-
-
-<div class="note">
-
-<b>Important:</b>
-This is a free simulated prototype. It generates market-like candles for testing.
-It does not connect to Quotex, does not import live Quotex prices, and does not place real trades.
-
-</div>
-
-</div>
-
-</section>
-
-
-<section>
-
-<div class="card">
-
-<div class="chart-head">
-
-<b>1-MINUTE MARKET CHART</b>
-
-<span id="pairLabel" class="pair">
-EUR/USD
-</span>
-
-</div>
-
-<canvas id="chart"></canvas>
-
-
-<div class="history">
-
-<b>RECENT SIGNALS</b>
-
-<div id="historyList" class="note">
-No signals yet.
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-</div>
-
-
-<footer>
-Money Loop • Experimental educational prototype • No profit guarantee
-</footer>
 
 </div>
 
 
 <script>
 
-(function(){
+/* =====================================================
+   ACCESS CODE
+   ===================================================== */
 
-"use strict";
+const ACCESS_CODE = "449900";
 
-const $ = id => document.getElementById(id);
+function login(){
 
-const canvas = $("chart");
+    const input =
+        document.getElementById("accessCode").value;
 
-const ctx = canvas.getContext("2d");
+    const error =
+        document.getElementById("loginError");
+
+    if(input === ACCESS_CODE){
+
+        document.getElementById("loginScreen").style.display =
+            "none";
+
+        document.getElementById("app").style.display =
+            "block";
+
+        sessionStorage.setItem(
+            "moneyLoopAccess",
+            "granted"
+        );
+
+        startApp();
+
+    }else{
+
+        error.style.display = "block";
+
+        document.getElementById("accessCode").value = "";
+
+        setTimeout(()=>{
+            error.style.display = "none";
+        },2500);
+    }
+}
+
+
+function logout(){
+
+    sessionStorage.removeItem(
+        "moneyLoopAccess"
+    );
+
+    location.reload();
+}
+
+
+/* ENTER KEY */
+
+document
+.getElementById("accessCode")
+.addEventListener("keydown",function(e){
+
+    if(e.key === "Enter"){
+        login();
+    }
+
+});
+
+
+/* =====================================================
+   APP
+   ===================================================== */
 
 let candles = [];
+let lastSignalCandle = null;
+let signalHistory = [];
 
-let history = [];
+const canvas =
+    document.getElementById("chart");
 
-let running = false;
-
-let timer = null;
-
-let lastSignal = "NO TRADE";
+const ctx =
+    canvas.getContext("2d");
 
 
 function resizeCanvas(){
 
-const dpr = window.devicePixelRatio || 1;
+    const rect =
+        canvas.getBoundingClientRect();
 
-const rect = canvas.getBoundingClientRect();
+    canvas.width =
+        rect.width * devicePixelRatio;
 
-canvas.width = Math.floor(rect.width*dpr);
+    canvas.height =
+        rect.height * devicePixelRatio;
 
-canvas.height = Math.floor(rect.height*dpr);
-
-ctx.setTransform(dpr,0,0,dpr,0,0);
-
-draw();
-
+    ctx.scale(
+        devicePixelRatio,
+        devicePixelRatio
+    );
 }
 
 
-window.addEventListener("resize",resizeCanvas);
-
-
-function seed(){
-
-candles=[];
-
-let price=100;
-
-for(let i=0;i<70;i++){
-
-let open=price;
-
-let close=Math.max(
-1,
-open+(Math.random()-0.47)*1.8
+window.addEventListener(
+    "resize",
+    resizeCanvas
 );
 
-let high=Math.max(open,close)+Math.random()*1.1;
 
-let low=Math.min(open,close)-Math.random()*1.1;
+/* =====================================================
+   MARKET SIMULATION
+   ===================================================== */
 
-candles.push({
-o:open,
-c:close,
-h:high,
-l:low
-});
+function generateInitialData(){
 
-price=close;
+    candles = [];
+
+    let price = 100;
+
+    for(let i=0;i<100;i++){
+
+        const open = price;
+
+        const move =
+            (Math.random() - 0.48) * 1.2;
+
+        const close =
+            open + move;
+
+        const high =
+            Math.max(open,close)
+            + Math.random()*0.4;
+
+        const low =
+            Math.min(open,close)
+            - Math.random()*0.4;
+
+        candles.push({
+            open,
+            high,
+            low,
+            close,
+            time:Date.now()-((100-i)*60000)
+        });
+
+        price = close;
+    }
+}
+
+
+function updateMarket(){
+
+    const previous =
+        candles[candles.length-1];
+
+    const open =
+        previous.close;
+
+    const move =
+        (Math.random()-0.48)*1.0;
+
+    const close =
+        open + move;
+
+    const high =
+        Math.max(open,close)
+        + Math.random()*0.25;
+
+    const low =
+        Math.min(open,close)
+        - Math.random()*0.25;
+
+    candles.push({
+        open,
+        high,
+        low,
+        close,
+        time:Date.now()
+    });
+
+    if(candles.length > 120){
+        candles.shift();
+    }
+
+    calculateIndicators();
+
+    drawChart();
+}
+
+
+/* =====================================================
+   EMA
+   ===================================================== */
+
+function EMA(period){
+
+    if(candles.length < period)
+        return candles[candles.length-1].close;
+
+    const k =
+        2/(period+1);
+
+    let ema =
+        candles
+        .slice(0,period)
+        .reduce(
+            (sum,c)=>sum+c.close,
+            0
+        )/period;
+
+    for(let i=period;i<candles.length;i++){
+
+        ema =
+            candles[i].close*k
+            +
+            ema*(1-k);
+    }
+
+    return ema;
+}
+
+
+/* =====================================================
+   RSI
+   ===================================================== */
+
+function RSI(period=14){
+
+    if(candles.length <= period)
+        return 50;
+
+    let gains = 0;
+    let losses = 0;
+
+    for(
+        let i=candles.length-period;
+        i<candles.length;
+        i++
+    ){
+
+        const diff =
+            candles[i].close -
+            candles[i-1].close;
+
+        if(diff > 0)
+            gains += diff;
+
+        else
+            losses += Math.abs(diff);
+    }
+
+    if(losses === 0)
+        return 100;
+
+    const rs =
+        gains/losses;
+
+    return 100-(100/(1+rs));
+}
+
+
+/* =====================================================
+   SUPPORT / RESISTANCE
+   ===================================================== */
+
+function getSupport(){
+
+    return Math.min(
+        ...candles
+        .slice(-30)
+        .map(c=>c.low)
+    );
+}
+
+
+function getResistance(){
+
+    return Math.max(
+        ...candles
+        .slice(-30)
+        .map(c=>c.high)
+    );
+}
+
+
+/* =====================================================
+   INDICATORS DISPLAY
+   ===================================================== */
+
+function calculateIndicators(){
+
+    const e9 = EMA(9);
+    const e21 = EMA(21);
+    const rsi = RSI(14);
+
+    document.getElementById("ema9")
+        .textContent = e9.toFixed(4);
+
+    document.getElementById("ema21")
+        .textContent = e21.toFixed(4);
+
+    document.getElementById("rsi")
+        .textContent = rsi.toFixed(1);
+
+    if(e9 > e21)
+        document.getElementById("market")
+        .textContent = "BULLISH";
+
+    else if(e9 < e21)
+        document.getElementById("market")
+        .textContent = "BEARISH";
+
+    else
+        document.getElementById("market")
+        .textContent = "NEUTRAL";
+}
+
+
+/* =====================================================
+   SIGNAL
+   ===================================================== */
+
+function getSignal(){
+
+    const current =
+        candles[candles.length-1];
+
+    const candleId =
+        Math.floor(
+            Date.now()/60000
+        );
+
+    /* Only one signal per candle */
+
+    if(lastSignalCandle === candleId){
+
+        alert(
+            "Signal already generated for this candle."
+        );
+
+        return;
+    }
+
+    lastSignalCandle =
+        candleId;
+
+    const e9 = EMA(9);
+    const e21 = EMA(21);
+    const rsi = RSI(14);
+
+    const support =
+        getSupport();
+
+    const resistance =
+        getResistance();
+
+    const price =
+        current.close;
+
+    let signal =
+        "NO TRADE";
+
+    let strength = 50;
+
+    /* Bullish conditions */
+
+    if(
+        e9 > e21 &&
+        rsi >= 50 &&
+        rsi < 75 &&
+        price > support
+    ){
+
+        signal = "UP / CALL";
+
+        strength =
+            Math.min(
+                95,
+                60+
+                Math.abs(e9-e21)*20
+            );
+    }
+
+    /* Bearish conditions */
+
+    else if(
+        e9 < e21 &&
+        rsi <= 50 &&
+        rsi > 25 &&
+        price < resistance
+    ){
+
+        signal = "DOWN / PUT";
+
+        strength =
+            Math.min(
+                95,
+                60+
+                Math.abs(e9-e21)*20
+            );
+    }
+
+    showSignal(
+        signal,
+        strength
+    );
+
+    addHistory(
+        signal,
+        strength
+    );
+}
+
+
+/* =====================================================
+   SHOW SIGNAL
+   ===================================================== */
+
+function showSignal(
+    signal,
+    strength
+){
+
+    const element =
+        document.getElementById("signal");
+
+    element.textContent =
+        signal;
+
+    element.className =
+        "signal";
+
+    if(signal.includes("UP"))
+        element.classList.add("call");
+
+    else if(signal.includes("DOWN"))
+        element.classList.add("put");
+
+    else
+        element.classList.add("noTrade");
+
+    document.getElementById("strength")
+        .textContent =
+        Math.round(strength)+"%";
+}
+
+
+/* =====================================================
+   HISTORY
+   ===================================================== */
+
+function addHistory(
+    signal,
+    strength
+){
+
+    const pair =
+        document.getElementById("pair").value;
+
+    const time =
+        new Date()
+        .toLocaleTimeString();
+
+    signalHistory.unshift({
+        signal,
+        strength,
+        pair,
+        time
+    });
+
+    if(signalHistory.length > 8)
+        signalHistory.pop();
+
+    const list =
+        document.getElementById(
+            "historyList"
+        );
+
+    list.innerHTML =
+        signalHistory.map(item=>{
+
+            let cls =
+                item.signal.includes("UP")
+                ? "call"
+                :
+                item.signal.includes("DOWN")
+                ? "put"
+                :
+                "noTrade";
+
+            return `
+                <div class="historyRow">
+                    <span>${item.time}</span>
+                    <span>${item.pair}</span>
+                    <b class="${cls}">
+                        ${item.signal}
+                    </b>
+                    <span>
+                        ${Math.round(item.strength)}%
+                    </span>
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+/* =====================================================
+   CHART
+   ===================================================== */
+
+function drawChart(){
+
+    const width =
+        canvas.clientWidth;
+
+    const height =
+        canvas.clientHeight;
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+    const data =
+        candles.slice(-70);
+
+    if(!data.length)
+        return;
+
+    const highs =
+        data.map(c=>c.high);
+
+    const lows =
+        data.map(c=>c.low);
+
+    const max =
+        Math.max(...highs);
+
+    const min =
+        Math.min(...lows);
+
+    const range =
+        max-min || 1;
+
+    const candleWidth =
+        width/data.length;
+
+    /* Grid */
+
+    ctx.strokeStyle =
+        "rgba(100,130,115,.12)";
+
+    ctx.lineWidth = 1;
+
+    for(let i=1;i<6;i++){
+
+        const y =
+            height*i/6;
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,y);
+
+        ctx.lineTo(width,y);
+
+        ctx.stroke();
+    }
+
+    for(let i=1;i<8;i++){
+
+        const x =
+            width*i/8;
+
+        ctx.beginPath();
+
+        ctx.moveTo(x,0);
+
+        ctx.lineTo(x,height);
+
+        ctx.stroke();
+    }
+
+
+    /* Candles */
+
+    data.forEach((c,i)=>{
+
+        const x =
+            i*candleWidth
+            +
+            candleWidth/2;
+
+        const yHigh =
+            height -
+            ((c.high-min)/range)*height;
+
+        const yLow =
+            height -
+            ((c.low-min)/range)*height;
+
+        const yOpen =
+            height -
+            ((c.open-min)/range)*height;
+
+        const yClose =
+            height -
+            ((c.close-min)/range)*height;
+
+        const bullish =
+            c.close >= c.open;
+
+        ctx.strokeStyle =
+            bullish
+            ? "#00ff9c"
+            : "#ff6573";
+
+        ctx.fillStyle =
+            bullish
+            ? "#00ff9c"
+            : "#ff6573";
+
+        /* Wick */
+
+        ctx.beginPath();
+
+        ctx.moveTo(x,yHigh);
+
+        ctx.lineTo(x,yLow);
+
+        ctx.stroke();
+
+        /* Body */
+
+        const bodyTop =
+            Math.min(
+                yOpen,
+                yClose
+            );
+
+        const bodyHeight =
+            Math.max(
+                2,
+                Math.abs(
+                    yClose-yOpen
+                )
+            );
+
+        ctx.fillRect(
+            x-candleWidth*.3,
+            bodyTop,
+            candleWidth*.6,
+            bodyHeight
+        );
+
+    });
 
 }
 
-}
 
+/* =====================================================
+   PAIR / TIMEFRAME / EXPIRY
+   ===================================================== */
 
-function tick(){
+document
+.getElementById("pair")
+.addEventListener(
+    "change",
+    function(){
 
-let previous=candles[candles.length-1].c;
+        document.getElementById(
+            "pairName"
+        ).textContent =
+            this.value;
 
-let open=previous;
+        document.getElementById(
+            "infoPair"
+        ).textContent =
+            this.value;
 
-let close=Math.max(
-1,
-open+(Math.random()-0.48)*1.8
+        /* New pair = new candle signal cycle */
+
+        lastSignalCandle = null;
+    }
 );
 
-let high=Math.max(open,close)+Math.random();
 
-let low=Math.min(open,close)-Math.random();
+document
+.getElementById("timeframe")
+.addEventListener(
+    "change",
+    function(){
 
-candles.push({
-o:open,
-c:close,
-h:high,
-l:low
-});
+        const text =
+            this.options[
+                this.selectedIndex
+            ].text;
 
-if(candles.length>90){
+        document.getElementById(
+            "tfText"
+        ).textContent = text;
 
-candles.shift();
+        document.getElementById(
+            "infoCandle"
+        ).textContent = text;
 
-}
-
-analyze();
-
-draw();
-
-}
-
-
-function EMA(values,period){
-
-if(!values.length)return 0;
-
-let k=2/(period+1);
-
-let e=values[0];
-
-for(let i=1;i<values.length;i++){
-
-e=values[i]*k+e*(1-k);
-
-}
-
-return e;
-
-}
-
-
-function RSI(values,period){
-
-if(values.length<period+1)return 50;
-
-let gain=0;
-
-let loss=0;
-
-for(let i=values.length-period;i<values.length;i++){
-
-let diff=values[i]-values[i-1];
-
-if(diff>=0){
-
-gain+=diff;
-
-}else{
-
-loss-=diff;
-
-}
-
-}
-
-if(loss===0)return 100;
-
-return 100-(100/(1+gain/loss));
-
-}
-
-
-function analyze(){
-
-let closes=candles.map(c=>c.c);
-
-let ema9=EMA(closes.slice(-50),9);
-
-let ema21=EMA(closes.slice(-50),21);
-
-let rsi=RSI(closes,14);
-
-let recent=candles.slice(-20);
-
-let resistance=Math.max(...recent.map(c=>c.h));
-
-let support=Math.min(...recent.map(c=>c.l));
-
-let last=candles[candles.length-1];
-
-let body=last.c-last.o;
-
-let range=Math.max(
-0.0001,
-last.h-last.l
+        lastSignalCandle = null;
+    }
 );
 
-let score=0;
 
-
-if(ema9>ema21)score++;
-
-if(ema9<ema21)score--;
-
-if(rsi>52 && rsi<72)score++;
-
-if(rsi<48 && rsi>28)score--;
-
-if(body>0 && body/range>0.35)score++;
-
-if(body<0 && Math.abs(body)/range>0.35)score--;
-
-
-let signal="NO TRADE";
-
-let className="wait";
-
-let strength=50;
-
-
-if(score>=2 && rsi<75){
-
-signal="CALL / UP";
-
-className="up";
-
-strength=65+Math.min(30,score*7);
-
-}
-
-
-else if(score<=-2 && rsi>25){
-
-signal="PUT / DOWN";
-
-className="down";
-
-strength=65+Math.min(30,Math.abs(score)*7);
-
-}
-
-
-else{
-
-strength=50+Math.abs(score)*4;
-
-}
-
-
-$("signal").textContent=signal;
-
-$("signal").className="signal-name "+className;
-
-$("strength").textContent=
-"Experimental strength: "+
-Math.round(strength)+"%";
-
-$("ema9").textContent=ema9.toFixed(3);
-
-$("ema21").textContent=ema21.toFixed(3);
-
-$("rsi").textContent=rsi.toFixed(1);
-
-$("sr").textContent=
-support.toFixed(2)+" / "+
-resistance.toFixed(2);
-
-
-if(signal!==lastSignal &&
-signal!=="NO TRADE"){
-
-history.unshift({
-
-signal:signal,
-
-time:new Date().toLocaleTimeString(),
-
-pair:$("pair").value
-
-});
-
-history=history.slice(0,8);
-
-renderHistory();
-
-}
-
-
-lastSignal=signal;
-
-}
-
-
-function renderHistory(){
-
-let box=$("historyList");
-
-if(!history.length){
-
-box.textContent="No signals yet.";
-
-return;
-
-}
-
-
-box.innerHTML=history.map(item=>{
-
-let type=item.signal.startsWith("CALL")
-?"up":"down";
-
-return `
-
-<div class="hist-item">
-
-<span>
-${item.time} • ${item.pair}
-</span>
-
-<span class="badge ${type}">
-${item.signal}
-</span>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-function draw(){
-
-let width=canvas.clientWidth;
-
-let height=canvas.clientHeight;
-
-if(!width || !height)return;
-
-ctx.clearRect(0,0,width,height);
-
-ctx.fillStyle="#030e16";
-
-ctx.fillRect(0,0,width,height);
-
-if(!candles.length)return;
-
-
-let data=candles.slice(-60);
-
-let min=Math.min(...data.map(c=>c.l));
-
-let max=Math.max(...data.map(c=>c.h));
-
-let padding=(max-min)*0.12 || 1;
-
-min-=padding;
-
-max+=padding;
-
-
-let step=width/data.length;
-
-
-function y(value){
-
-return height-22-
-(value-min)/(max-min)*(height-42);
-
-}
-
-
-ctx.strokeStyle="#102832";
-
-ctx.lineWidth=1;
-
-
-for(let i=1;i<5;i++){
-
-let yy=10+i*(height-30)/5;
-
-ctx.beginPath();
-
-ctx.moveTo(0,yy);
-
-ctx.lineTo(width,yy);
-
-ctx.stroke();
-
-}
-
-
-data.forEach((candle,index)=>{
-
-let x=index*step+step/2;
-
-ctx.strokeStyle="#78909c";
-
-ctx.beginPath();
-
-ctx.moveTo(x,y(candle.h));
-
-ctx.lineTo(x,y(candle.l));
-
-ctx.stroke();
-
-
-ctx.fillStyle=
-candle.c>=candle.o
-?"#22d878"
-:"#ff6675";
-
-
-let top=y(Math.max(candle.o,candle.c));
-
-let bottom=y(Math.min(candle.o,candle.c));
-
-
-ctx.fillRect(
-x-step*0.32,
-top,
-Math.max(2,step*0.64),
-Math.max(2,bottom-top)
+document
+.getElementById("expiry")
+.addEventListener(
+    "change",
+    function(){
+
+        const seconds =
+            Number(this.value);
+
+        let text;
+
+        if(seconds < 60)
+            text = seconds+" Seconds";
+
+        else
+            text =
+                (seconds/60)+" Minute"
+                +
+                (seconds>60?"s":"");
+
+        document.getElementById(
+            "infoExpiry"
+        ).textContent = text;
+    }
 );
 
-});
 
+/* =====================================================
+   CANDLE COUNTDOWN
+   ===================================================== */
 
-function drawEMA(period){
+function updateCountdown(){
 
-let values=[];
+    const now =
+        new Date();
 
-for(let i=0;i<data.length;i++){
+    const seconds =
+        now.getSeconds();
 
-values.push(
-EMA(
-data.slice(0,i+1).map(c=>c.c),
-period
-)
-);
+    const remaining =
+        60-seconds;
 
+    document.getElementById(
+        "countdown"
+    ).textContent =
+        remaining+"s";
 }
 
 
-ctx.beginPath();
+/* =====================================================
+   START
+   ===================================================== */
 
-values.forEach((value,index)=>{
+function startApp(){
 
-let x=index*step+step/2;
+    resizeCanvas();
 
-let yy=y(value);
+    generateInitialData();
 
-if(index===0){
+    calculateIndicators();
 
-ctx.moveTo(x,yy);
+    drawChart();
 
-}else{
+    updateCountdown();
 
-ctx.lineTo(x,yy);
+    setInterval(
+        updateCountdown,
+        1000
+    );
 
-}
+    /*
+      Simulated market update.
+      This is NOT live Quotex data.
+    */
 
-});
-
-ctx.stroke();
-
-}
-
-
-ctx.lineWidth=1.5;
-
-ctx.strokeStyle="#42e6a4";
-
-drawEMA(9);
-
-ctx.strokeStyle="#7ba8ff";
-
-drawEMA(21);
-
+    setInterval(
+        updateMarket,
+        3000
+    );
 }
 
 
-$("pair").addEventListener("change",function(){
+/* =====================================================
+   AUTO LOGIN FOR CURRENT SESSION
+   ===================================================== */
 
-$("pairLabel").textContent=this.value;
+if(
+    sessionStorage.getItem(
+        "moneyLoopAccess"
+    ) === "granted"
+){
 
-});
+    document.getElementById(
+        "loginScreen"
+    ).style.display =
+        "none";
 
+    document.getElementById(
+        "app"
+    ).style.display =
+        "block";
 
-$("start").addEventListener("click",function(){
-
-if(running)return;
-
-running=true;
-
-$("status").textContent="● RUNNING";
-
-$("status").style.color="#77f5ad";
-
-analyze();
-
-draw();
-
-timer=setInterval(tick,1000);
-
-});
-
-
-$("stop").addEventListener("click",function(){
-
-running=false;
-
-clearInterval(timer);
-
-timer=null;
-
-$("status").textContent="● STOPPED";
-
-$("status").style.color="#ff9ba7";
-
-});
-
-
-$("reset").addEventListener("click",function(){
-
-running=false;
-
-clearInterval(timer);
-
-timer=null;
-
-history=[];
-
-lastSignal="NO TRADE";
-
-$("status").textContent="● STOPPED";
-
-$("status").style.color="#ff9ba7";
-
-$("signal").textContent="NO TRADE";
-
-$("signal").className="signal-name wait";
-
-$("strength").textContent="Waiting for analysis...";
-
-renderHistory();
-
-seed();
-
-analyze();
-
-draw();
-
-});
-
-
-seed();
-
-requestAnimationFrame(function(){
-
-resizeCanvas();
-
-analyze();
-
-});
-
-})();
+    startApp();
+}
 
 </script>
 
